@@ -57,7 +57,7 @@ function ProgressBar( canvas, initialPosition, options ) {
 
     this.options = {
         'strokeStyle': isset(options, 'stroke', '#000'),
-        'lineWidth': isset(options, 'width', 3),
+        'lineWidth': isset(options, 'width', 20),
         'lineCap': isset(options, 'cap', 'butt'),
         'gradientStart': isset(options, 'gradientStart', '#f1c40f'),
         'gradientEnd': isset(options, 'gradientEnd', '#e89e05'),
@@ -141,6 +141,14 @@ ProgressBar.prototype = {
         this.ctx.clearRect(0, 0, this.realWidth, this.realHeight);
     },
 
+    UpdateStyles: function() {
+        for(var style in this.options) {
+            if(this.ctx.hasOwnProperty(style)) {
+                this.ctx[style] = this.options[style];
+            }
+        }
+    },
+
     /*
         Update; update the current progress bar to {value}
         @param value {integer} - position in %
@@ -154,9 +162,15 @@ ProgressBar.prototype = {
         grad.addColorStop(1, this.options.gradientEnd);
 
         this.Clear();
+
+        if(this.ctx.lineWidth != this.options.lineWidth) {
+            this.ctx.lineWidth = this.options.lineWidth;
+        }
+
         this.ctx.beginPath();
-        this.ctx.strokeStyle = grad;
         this.ctx.arc(this.x, this.y, this.r, -this.quart * value/100, this.circ - this.quart, false);
+        
+        this.ctx.strokeStyle = grad;
         this.ctx.stroke();
 
     },
